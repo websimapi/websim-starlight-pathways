@@ -83,7 +83,7 @@ export class LevelManager {
             {
                 name: "Anti-Gravity",
                 hint: "Gravity is reversed! Guide the rising stars.",
-                gravity: { x: 0, y: 0.4 }, // Upwards (since +Y is up in ThreeJS)
+                gravity: { x: 0, y: 1.5 }, // Stronger reverse gravity
                 emitters: [
                     { x: 0, y: -30, color: 'white', rate: 10 }
                 ],
@@ -115,7 +115,7 @@ export class LevelManager {
             this.world.gravity.y = data.gravity.y;
         } else {
             this.world.gravity.x = 0;
-            this.world.gravity.y = -0.5; // Default Down
+            this.world.gravity.y = -2.0; // Stronger gravity for better fall feel
         }
 
         // Spawn Walls
@@ -431,8 +431,8 @@ export class LevelManager {
         const size = 0.5; // Slightly larger physics body too
         const body = Matter.Bodies.circle(x, y, size, {
             friction: 0.0,
-            restitution: 0.4, // Less bouncy
-            frictionAir: 0.04, // Floatier (slower fall)
+            restitution: 0.3, // Reduced bounciness
+            frictionAir: 0.005, // Significantly reduced drag so particles actually fall
             mass: 0.1,
             render: { visible: false } // We use Three.js
         });

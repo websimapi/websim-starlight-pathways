@@ -236,7 +236,7 @@ function extendLine(point) {
         isStatic: true,
         angle: angle,
         friction: 0,
-        restitution: 1 
+        restitution: 0.2 // Reduced restitution to prevent excessive bouncing
     });
 
     Matter.Composite.add(world, body);
@@ -287,7 +287,8 @@ function updateParticles() {
             continue;
         }
 
-        if (p.body.position.y < -60 || Math.abs(p.body.position.x) > 60) {
+        // Expanded bounds check to handle anti-gravity (upwards) particles too
+        if (Math.abs(p.body.position.y) > 70 || Math.abs(p.body.position.x) > 60) {
             Matter.Composite.remove(world, p.body);
             particles.splice(i, 1);
             continue;
