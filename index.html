@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Starlight Pathways</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050510;
+            background-image: url('./bg_stars.png');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: none; /* Prevent scrolling on mobile */
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .hud-top {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .hud-bottom {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+        .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            pointer-events: auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            user-select: none;
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .level-info {
+            color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            font-size: 24px;
+            font-weight: 300;
+        }
+        .tutorial {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        #overlay-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        #overlay-message.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #overlay-message h1 {
+            font-size: 48px;
+            margin: 0 0 20px 0;
+            text-shadow: 0 0 20px #fff;
+        }
+        .progress-container {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .crystal-tracker {
+            width: 40px;
+            height: 120px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .tracker-fill {
+            width: 100%;
+            background: white;
+            height: 0%;
+            transition: height 0.3s, background-color 0.3s;
+            box-shadow: 0 0 15px currentColor;
+        }
+        .tracker-icon {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://esm.sh/three@0.160.0",
+                "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/",
+                "matter-js": "https://esm.sh/matter-js@0.19.0"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div id="ui-layer">
+        <div class="hud-top">
+            <div>
+                <div class="level-info" id="level-title">Level 1</div>
+                <div class="tutorial" id="level-hint">Draw to guide the light.</div>
+            </div>
+            <button class="btn" id="btn-reset">Reset</button>
+        </div>
+        <div class="progress-container" id="trackers">
+            <!-- Dynamically populated -->
+        </div>
+        <div class="hud-bottom">
+            <button class="btn" id="btn-clear">Clear Lines</button>
+        </div>
+    </div>
+    <div id="overlay-message">
+        <h1>Celestial Harmony</h1>
+        <button class="btn" id="btn-next">Next Journey</button>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
