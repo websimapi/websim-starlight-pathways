@@ -75,7 +75,7 @@ function init() {
     engine.gravity.y = 0.5; // Positive is down in canvas usually, but let's check coord mapping
 
     // 3. Particles Visualization
-    const particleGeo = new THREE.PlaneGeometry(1.5, 1.5);
+    const particleGeo = new THREE.PlaneGeometry(2.5, 2.5);
     const particleMat = new THREE.MeshBasicMaterial({
         map: particleTexture,
         transparent: true,
@@ -88,7 +88,7 @@ function init() {
     scene.add(particleInstancedMesh);
 
     // Cursor Light
-    cursorLight = new THREE.PointLight(0xffaa00, 2, 20);
+    cursorLight = new THREE.PointLight(0xffaa00, 3, 25);
     cursorLight.position.set(0, 0, 5);
     cursorLight.visible = false;
     scene.add(cursorLight);
@@ -102,6 +102,7 @@ function init() {
 
     // UI Buttons
     document.getElementById('btn-clear').addEventListener('click', clearDrawnLines);
+    document.getElementById('btn-undo').addEventListener('click', undoLastLine);
     document.getElementById('btn-reset').addEventListener('click', () => {
         clearDrawnLines();
         levelManager.resetLevel();
@@ -202,7 +203,7 @@ function startNewLine(point) {
 
     const material = new THREE.LineBasicMaterial({
         color: 0xffddaa,
-        linewidth: 3 
+        linewidth: 4 
     });
 
     const geometry = new THREE.BufferGeometry().setFromPoints([point, point]);
@@ -221,7 +222,7 @@ function extendLine(point) {
     if (!lastDrawPoint || !currentLineBody) return;
 
     const dist = lastDrawPoint.distanceTo(point);
-    if (dist < 1.5) return; 
+    if (dist < 1.0) return; // Smoother lines
 
     currentLineBody.points.push(point.clone());
     currentLineBody.visual.geometry.setFromPoints(currentLineBody.points);
@@ -251,6 +252,14 @@ function clearDrawnLines() {
         line.physicsBodies.forEach(b => Matter.Composite.remove(world, b));
     });
     drawnBodies = [];
+}
+
+function undoLastLine() {
+    if (drawnBodies.length === 0) return;
+    const line = drawnBodies.pop();
+    scene.remove(line.visual);
+    line.visual.geometry.dispose();
+    line.physicsBodies.forEach(b => Matter.Composite.remove(world, b));
 }
 
 // --- Game Loop ---

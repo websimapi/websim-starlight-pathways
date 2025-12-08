@@ -26,12 +26,12 @@ export class LevelManager {
         this.levels = [
             {
                 name: "Starlight Falls",
-                hint: "Draw a line to guide the light into the crystal.",
+                hint: "Draw a line to guide the stars into the crystal.",
                 emitters: [
                     { x: -10, y: 30, color: 'white', rate: 5 }
                 ],
                 goals: [
-                    { x: 10, y: -20, color: 'white', req: 50, w: 8, h: 5 }
+                    { x: 10, y: -20, color: 'white', req: 30, w: 8, h: 5 }
                 ],
                 walls: []
             },
@@ -82,8 +82,8 @@ export class LevelManager {
             },
             {
                 name: "Anti-Gravity",
-                hint: "Gravity is reversed here. Guide the rising stars.",
-                gravity: { x: 0, y: 0.5 }, // Upwards (since +Y is up in ThreeJS)
+                hint: "Gravity is reversed! Guide the rising stars.",
+                gravity: { x: 0, y: 0.4 }, // Upwards (since +Y is up in ThreeJS)
                 emitters: [
                     { x: 0, y: -30, color: 'white', rate: 10 }
                 ],
@@ -132,7 +132,7 @@ export class LevelManager {
                 // Visual
                 const mesh = new THREE.Mesh(
                     new THREE.BoxGeometry(w.w, w.h, 5),
-                    new THREE.MeshStandardMaterial({ color: 0x444455, roughness: 0.2 })
+                    new THREE.MeshStandardMaterial({ color: 0x666677, roughness: 0.2, metalness: 0.5 })
                 );
                 mesh.position.set(w.x, w.y, 0);
                 mesh.rotation.z = w.rot || 0;
@@ -185,35 +185,52 @@ export class LevelManager {
 
         // Spawn Goals (Crystals)
         this.goals = data.goals.map(g => {
-            // Visual Cup/Crystal base
-            const geo = new THREE.TorusGeometry(3, 0.5, 8, 20); // Ring
-            const mat = new THREE.MeshStandardMaterial({ 
-                color: 0xffffff, 
-                emissive: this.colors[g.color],
-                emissiveIntensity: 0.5,
-                roughness: 0.1,
-                metalness: 0.8
-            });
-            const mesh = new THREE.Mesh(geo, mat);
-            mesh.position.set(g.x, g.y, 0);
-            mesh.rotation.x = Math.PI / 2; // Flat on ground roughly
-            // Actually let's make it a U shape or just a sensor zone
-
-            // Let's make a "Cup" visual from 3 planes
+            // New Goal Visual: A glowing platform/cup
             const cupGroup = new THREE.Group();
             cupGroup.position.set(g.x, g.y, 0);
 
-            // Visual Crystal
-            const crystalGeo = new THREE.OctahedronGeometry(2);
+            // 1. The Base Platform
+            const baseGeo = new THREE.BoxGeometry(g.w + 2, 1, 4);
+            const baseMat = new THREE.MeshStandardMaterial({ 
+                color: 0x444444, 
+                roughness: 0.3 
+            });
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.position.y = -g.h/2;
+            cupGroup.add(base);
+
+            // 2. The Collection Zone Glow
+            const zoneGeo = new THREE.BoxGeometry(g.w, g.h, 4);
+            const zoneMat = new THREE.MeshBasicMaterial({
+                color: this.colors[g.color] || 0xffffff,
+                transparent: true,
+                opacity: 0.15,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            });
+            const zone = new THREE.Mesh(zoneGeo, zoneMat);
+            cupGroup.add(zone);
+
+            // 3. Floating Crystal Icon
+            const crystalGeo = new THREE.OctahedronGeometry(2.5);
             const crystalMat = new THREE.MeshPhongMaterial({
-                color: this.colors[g.color], 
-                transparent: true, 
-                opacity: 0.8,
-                shininess: 100
+                color: this.colors[g.color] || 0xffffff,
+                transparent: true,
+                opacity: 0.9,
+                shininess: 100,
+                emissive: this.colors[g.color] || 0xffffff,
+                emissiveIntensity: 0.5
             });
             const crystal = new THREE.Mesh(crystalGeo, crystalMat);
             crystal.userData.spin = true;
             cupGroup.add(crystal);
+
+            // 4. Indicator Ring
+            const ringGeo = new THREE.TorusGeometry(3.5, 0.1, 8, 32);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.userData.pulse = true;
+            cupGroup.add(ring);
 
             this.scene.add(cupGroup);
 
@@ -230,15 +247,47 @@ export class LevelManager {
             return {
                 ...g,
                 current: 0,
-                sensorBody: sensor
+                sensorBody: sensor,
+                visual: cupGroup
             };
         });
 
         // Setup Emitters
-        this.emitters = data.emitters.map(e => ({ 
-            ...e,
-            timer: 0
-        }));
+        this.emitters = data.emitters.map(e => {
+            // Visual for Emitter
+            const emGroup = new THREE.Group();
+            emGroup.position.set(e.x, e.y, 0);
+
+            const coreGeo = new THREE.SphereGeometry(1.5, 16, 16);
+            const coreMat = new THREE.MeshBasicMaterial({
+                color: this.colors[e.color] || 0xffffff,
+                transparent: true,
+                opacity: 0.8
+            });
+            const core = new THREE.Mesh(coreGeo, coreMat);
+            emGroup.add(core);
+
+            const glowGeo = new THREE.SphereGeometry(3, 16, 16);
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: this.colors[e.color] || 0xffffff,
+                transparent: true,
+                opacity: 0.2,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const glow = new THREE.Mesh(glowGeo, glowMat);
+            glow.scale.set(0.8, 0.8, 0.8);
+            glow.userData.pulse = true;
+            emGroup.add(glow);
+
+            this.scene.add(emGroup);
+            this.levelObjects.push({ mesh: emGroup });
+
+            return { 
+                ...e,
+                timer: 0
+            };
+        });
 
         this.isRunning = true;
 
@@ -305,10 +354,8 @@ export class LevelManager {
         // 1. Emit Particles
         this.emitters.forEach(e => {
             e.timer += dt;
-            const interval = 1000 / (e.rate * 10); // rate is rough "particles per frame" multiplier
-            // Let's say rate 5 = 1 particle every 2 frames approx (at 60fps)
-            // interval in ms. if rate is 5, interval = 20ms.
-            if (e.timer > 30) { // Throttle
+            const interval = 1000 / (e.rate * 10); 
+            if (e.timer > interval) { // Fixed timing
                 e.timer = 0;
                 this.spawnParticle(e.x + (Math.random() - 0.5) * 2, e.y, e.color);
             }
@@ -341,6 +388,12 @@ export class LevelManager {
                      if (p.colorName === goal.color || goal.color === 'any') {
                          goal.current++;
                          p.isDead = true; // Absorbed
+                         
+                         // Visual Feedback
+                         if (goal.visual) {
+                             goal.visual.scale.set(1.2, 1.2, 1.2); // Pulse
+                         }
+
                          this.updateScoreUI();
                          this.checkWinCondition();
                      }
@@ -348,15 +401,26 @@ export class LevelManager {
             }
         }
 
-        // Spin crystals
+        // Spin crystals & Animate visuals
         this.levelObjects.forEach(obj => {
-            if (obj.mesh && obj.mesh.children) {
-                obj.mesh.children.forEach(c => {
-                    if (c.userData.spin) {
-                        c.rotation.y += 0.02;
-                        c.rotation.z += 0.01;
-                    }
-                });
+            if (obj.mesh) {
+                // Scale return
+                if (obj.mesh.children.length > 2 && obj.mesh.scale.x > 1) {
+                     obj.mesh.scale.lerp(new THREE.Vector3(1,1,1), 0.1);
+                }
+
+                if (obj.mesh.children) {
+                    obj.mesh.children.forEach(c => {
+                        if (c.userData.spin) {
+                            c.rotation.y += 0.02;
+                            c.rotation.z += 0.01;
+                        }
+                        if (c.userData.pulse) {
+                            const s = 1 + Math.sin(Date.now() * 0.005) * 0.2;
+                            c.scale.set(s, s, s);
+                        }
+                    });
+                }
             }
         });
     }
@@ -364,11 +428,11 @@ export class LevelManager {
     spawnParticle(x, y, color) {
         if (this.particles.length >= 1000) return; // Hard limit
 
-        const size = 0.4;
+        const size = 0.5; // Slightly larger physics body too
         const body = Matter.Bodies.circle(x, y, size, {
             friction: 0.0,
-            restitution: 0.5,
-            frictionAir: 0.02,
+            restitution: 0.4, // Less bouncy
+            frictionAir: 0.04, // Floatier (slower fall)
             mass: 0.1,
             render: { visible: false } // We use Three.js
         });

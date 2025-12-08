@@ -82,6 +82,18 @@
             opacity: 0.8;
             margin-top: 5px;
         }
+        #level-hint {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 18px;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            animation: pulseText 2s infinite;
+        }
+        @keyframes pulseText {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+            100% { opacity: 0.8; }
+        }
         #overlay-message {
             position: absolute;
             top: 50%;
@@ -164,6 +176,7 @@
             <!-- Dynamically populated -->
         </div>
         <div class="hud-bottom">
+            <button class="btn" id="btn-undo">Undo</button>
             <button class="btn" id="btn-clear">Clear Lines</button>
         </div>
     </div>
