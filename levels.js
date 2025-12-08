@@ -110,12 +110,15 @@ export class LevelManager {
         document.getElementById('level-hint').innerText = data.hint;
 
         // Physics Gravity reset
+        // Increase scale to make physics responsive at this coordinate scale
+        this.world.gravity.scale = 0.003; 
+
         if (data.gravity) {
             this.world.gravity.x = data.gravity.x;
             this.world.gravity.y = data.gravity.y;
         } else {
             this.world.gravity.x = 0;
-            this.world.gravity.y = -2.0; // Stronger gravity for better fall feel
+            this.world.gravity.y = -3.0; // Adjusted gravity strength
         }
 
         // Spawn Walls
@@ -355,9 +358,10 @@ export class LevelManager {
         this.emitters.forEach(e => {
             e.timer += dt;
             const interval = 1000 / (e.rate * 10); 
-            if (e.timer > interval) { // Fixed timing
-                e.timer = 0;
-                this.spawnParticle(e.x + (Math.random() - 0.5) * 2, e.y, e.color);
+            // Accumulator loop to prevent spawn loss on lag
+            while (e.timer > interval) { 
+                e.timer -= interval;
+                this.spawnParticle(e.x + (Math.random() - 0.5) * 4, e.y, e.color);
             }
         });
 
@@ -426,23 +430,23 @@ export class LevelManager {
     }
 
     spawnParticle(x, y, color) {
-        if (this.particles.length >= 1000) return; // Hard limit
+        if (this.particles.length >= 1200) return; // Matched limit with main.js
 
-        const size = 0.5; // Slightly larger physics body too
+        const size = 0.6; 
         const body = Matter.Bodies.circle(x, y, size, {
             friction: 0.0,
-            restitution: 0.3, // Reduced bounciness
-            frictionAir: 0.005, // Significantly reduced drag so particles actually fall
-            mass: 0.1,
-            render: { visible: false } // We use Three.js
+            restitution: 0.5,
+            frictionAir: 0.001, // Minimal drag for better falling
+            mass: 0.2,
+            render: { visible: false } 
         });
 
         Matter.Composite.add(this.world, body);
 
-        // Initial velocity variation
+        // Initial velocity variation - spray effect
         Matter.Body.setVelocity(body, { 
-            x: (Math.random() - 0.5) * 0.5, 
-            y: (Math.random() - 0.5) * 0.5 
+            x: (Math.random() - 0.5) * 2.0, 
+            y: (Math.random() - 0.5) * 2.0 
         });
 
         this.particles.push({

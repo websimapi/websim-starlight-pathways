@@ -75,7 +75,7 @@ function init() {
     engine.gravity.y = 0.5; // Positive is down in canvas usually, but let's check coord mapping
 
     // 3. Particles Visualization
-    const particleGeo = new THREE.PlaneGeometry(2.5, 2.5);
+    const particleGeo = new THREE.PlaneGeometry(3.5, 3.5); // Slightly larger for visibility
     const particleMat = new THREE.MeshBasicMaterial({
         map: particleTexture,
         transparent: true,
@@ -85,6 +85,7 @@ function init() {
     });
     particleInstancedMesh = new THREE.InstancedMesh(particleGeo, particleMat, MAX_PARTICLES);
     particleInstancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    particleInstancedMesh.frustumCulled = false; // Ensure particles are always rendered
     scene.add(particleInstancedMesh);
 
     // Cursor Light
