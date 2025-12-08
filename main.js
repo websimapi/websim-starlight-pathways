@@ -233,11 +233,11 @@ function extendLine(point) {
     const angle = Math.atan2(point.y - lastDrawPoint.y, point.x - lastDrawPoint.x);
     const len = dist;
 
-    const body = Matter.Bodies.rectangle(midX, midY, len, 3.0, {
+    const body = Matter.Bodies.rectangle(midX, midY, len, 8.0, { // Thicker physics body for collision safety
         isStatic: true,
         angle: angle,
         friction: 0,
-        restitution: 0.2 // Reduced restitution to prevent excessive bouncing
+        restitution: 0.2 
     });
 
     Matter.Composite.add(world, body);
@@ -319,6 +319,16 @@ function updateParticles() {
 function onLevelComplete() {
     document.getElementById('overlay-message').classList.add('visible');
     playChime();
+    
+    // Auto-advance after 4 seconds if no interaction
+    setTimeout(() => {
+        const overlay = document.getElementById('overlay-message');
+        if (overlay.classList.contains('visible')) {
+            overlay.classList.remove('visible');
+            clearDrawnLines();
+            levelManager.nextLevel();
+        }
+    }, 4000);
 }
 
 function onScoreUpdate(progressData) {

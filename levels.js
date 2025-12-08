@@ -27,72 +27,123 @@ export class LevelManager {
             {
                 name: "Starlight Falls",
                 hint: "Draw a line to guide the stars into the crystal.",
-                emitters: [
-                    { x: -10, y: 30, color: 'white', rate: 5 }
-                ],
-                goals: [
-                    { x: 10, y: -20, color: 'white', req: 30, w: 8, h: 5 }
-                ],
-                walls: []
+                emitters: [ { x: -10, y: 30, color: 'white', rate: 3 } ],
+                goals: [ { x: 10, y: -20, color: 'white', req: 20, w: 8, h: 5 } ]
             },
             {
                 name: "The Divide",
                 hint: "Split the stream to fill both crystals.",
-                emitters: [
-                    { x: 0, y: 35, color: 'white', rate: 8 }
-                ],
+                emitters: [ { x: 0, y: 35, color: 'white', rate: 5 } ],
                 goals: [
-                    { x: -20, y: -25, color: 'white', req: 40, w: 8, h: 5 },
-                    { x: 20, y: -25, color: 'white', req: 40, w: 8, h: 5 }
+                    { x: -20, y: -25, color: 'white', req: 25, w: 8, h: 5 },
+                    { x: 20, y: -25, color: 'white', req: 25, w: 8, h: 5 }
                 ],
-                walls: [
-                    { x: 0, y: 0, w: 4, h: 20, rot: 0 } // Middle obstacle
-                ]
+                walls: [ { x: 0, y: 0, w: 4, h: 20, rot: 0 } ]
             },
             {
                 name: "Prism Gate",
                 hint: "Pass light through the gate to change its color.",
-                emitters: [
-                    { x: -20, y: 35, color: 'white', rate: 6 }
-                ],
-                goals: [
-                    { x: 20, y: -25, color: 'red', req: 50, w: 8, h: 5 }
-                ],
-                gates: [
-                    { x: 0, y: 10, w: 15, h: 2, color: 'red' }
-                ],
-                walls: []
+                emitters: [ { x: -20, y: 35, color: 'white', rate: 4 } ],
+                goals: [ { x: 20, y: -25, color: 'red', req: 30, w: 8, h: 5 } ],
+                gates: [ { x: 0, y: 10, w: 15, h: 2, color: 'red' } ]
             },
             {
                 name: "Chromatic Crossing",
                 hint: "Sort the colors correctly.",
                 emitters: [
-                    { x: -15, y: 35, color: 'white', rate: 5 },
-                    { x: 15, y: 35, color: 'white', rate: 5 }
+                    { x: -15, y: 35, color: 'white', rate: 4 },
+                    { x: 15, y: 35, color: 'white', rate: 4 }
                 ],
                 goals: [
-                    { x: -20, y: -30, color: 'blue', req: 40, w: 8, h: 5 },
-                    { x: 20, y: -30, color: 'red', req: 40, w: 8, h: 5 }
+                    { x: -20, y: -30, color: 'blue', req: 30, w: 8, h: 5 },
+                    { x: 20, y: -30, color: 'red', req: 30, w: 8, h: 5 }
                 ],
                 gates: [
                     { x: -15, y: 5, w: 10, h: 2, color: 'blue' },
                     { x: 15, y: 5, w: 10, h: 2, color: 'red' }
-                ],
-                walls: []
+                ]
             },
             {
                 name: "Anti-Gravity",
                 hint: "Gravity is reversed! Guide the rising stars.",
-                gravity: { x: 0, y: 1.5 }, // Stronger reverse gravity
+                gravity: { x: 0, y: 0.4 }, 
+                emitters: [ { x: 0, y: -30, color: 'white', rate: 8 } ],
+                goals: [
+                    { x: -20, y: 20, color: 'white', req: 25, w: 8, h: 5 },
+                    { x: 20, y: 20, color: 'white', req: 25, w: 8, h: 5 }
+                ],
+                walls: [ { x: 0, y: 0, w: 10, h: 2, rot: 0.7 } ]
+            },
+            {
+                name: "The Funnel",
+                hint: "Guide the wide stream into the narrow path.",
+                emitters: [ { x: 0, y: 35, color: 'white', rate: 8 } ],
+                goals: [ { x: 0, y: -35, color: 'white', req: 50, w: 6, h: 5 } ],
+                walls: [
+                    { x: -15, y: 10, w: 20, h: 2, rot: 0.5 },
+                    { x: 15, y: 10, w: 20, h: 2, rot: -0.5 },
+                    { x: -10, y: -15, w: 20, h: 2, rot: -0.5 },
+                    { x: 10, y: -15, w: 20, h: 2, rot: 0.5 }
+                ]
+            },
+            {
+                name: "Cross Streams",
+                hint: "Don't let the colors mix!",
                 emitters: [
-                    { x: 0, y: -30, color: 'white', rate: 10 }
+                    { x: -20, y: 30, color: 'red', rate: 5 },
+                    { x: 20, y: 30, color: 'blue', rate: 5 }
                 ],
                 goals: [
-                    { x: -20, y: 20, color: 'white', req: 30, w: 8, h: 5 },
-                    { x: 20, y: 20, color: 'white', req: 30, w: 8, h: 5 }
+                    { x: 20, y: -30, color: 'red', req: 30, w: 8, h: 5 },
+                    { x: -20, y: -30, color: 'blue', req: 30, w: 8, h: 5 }
+                ],
+                walls: [ { x: 0, y: 0, w: 2, h: 10, rot: 0 } ]
+            },
+            {
+                name: "Floating Islands",
+                hint: "Navigate around the obstacles.",
+                emitters: [ { x: 0, y: 35, color: 'purple', rate: 6 } ],
+                goals: [ { x: 0, y: -35, color: 'purple', req: 40, w: 8, h: 5 } ],
+                walls: [
+                    { x: -10, y: 15, w: 8, h: 2, rot: 0.2 },
+                    { x: 10, y: 5, w: 8, h: 2, rot: -0.2 },
+                    { x: -10, y: -5, w: 8, h: 2, rot: 0.2 },
+                    { x: 10, y: -15, w: 8, h: 2, rot: -0.2 }
+                ]
+            },
+            {
+                name: "Color Rain",
+                hint: "Filter the colors to their homes.",
+                emitters: [ { x: 0, y: 35, color: 'white', rate: 8 } ],
+                goals: [
+                    { x: -20, y: -30, color: 'green', req: 20, w: 6, h: 4 },
+                    { x: 0, y: -30, color: 'blue', req: 20, w: 6, h: 4 },
+                    { x: 20, y: -30, color: 'red', req: 20, w: 6, h: 4 }
+                ],
+                gates: [
+                    { x: -15, y: 0, w: 8, h: 2, color: 'green' },
+                    { x: 0, y: 0, w: 8, h: 2, color: 'blue' },
+                    { x: 15, y: 0, w: 8, h: 2, color: 'red' }
+                ]
+            },
+            {
+                name: "Starlight Mastery",
+                hint: "The final test of flow.",
+                emitters: [
+                    { x: -25, y: 30, color: 'white', rate: 6 },
+                    { x: 25, y: 30, color: 'white', rate: 6 }
+                ],
+                goals: [
+                    { x: 0, y: 0, color: 'purple', req: 60, w: 10, h: 5 }
+                ],
+                gates: [
+                     { x: -15, y: 15, w: 10, h: 2, color: 'red' },
+                     { x: 15, y: 15, w: 10, h: 2, color: 'blue' },
+                     { x: 0, y: 5, w: 20, h: 2, color: 'purple' }
                 ],
                 walls: [
-                     { x: 0, y: 0, w: 10, h: 2, rot: 0.7 }
+                    { x: -25, y: 0, w: 10, h: 2, rot: -0.5 },
+                    { x: 25, y: 0, w: 10, h: 2, rot: 0.5 }
                 ]
             }
         ];
@@ -118,7 +169,7 @@ export class LevelManager {
             this.world.gravity.y = data.gravity.y;
         } else {
             this.world.gravity.x = 0;
-            this.world.gravity.y = -1.0; // Adjusted gravity strength
+            this.world.gravity.y = -0.25; // Adjusted gravity strength for floaty feel
         }
 
         // Spawn Walls
@@ -436,7 +487,7 @@ export class LevelManager {
         const body = Matter.Bodies.circle(x, y, size, {
             friction: 0.0,
             restitution: 0.5,
-            frictionAir: 0.03, // Increased drag for better falling
+            frictionAir: 0.08, // Higher drag for slower, floaty movement
             mass: 0.2,
             render: { visible: false } 
         });
