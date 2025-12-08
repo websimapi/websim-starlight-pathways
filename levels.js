@@ -169,7 +169,7 @@ export class LevelManager {
             this.world.gravity.y = data.gravity.y;
         } else {
             this.world.gravity.x = 0;
-            this.world.gravity.y = -0.25; // Adjusted gravity strength for floaty feel
+            this.world.gravity.y = -0.15; // Adjusted gravity strength for floaty feel
         }
 
         // Spawn Walls
@@ -487,7 +487,7 @@ export class LevelManager {
         const body = Matter.Bodies.circle(x, y, size, {
             friction: 0.0,
             restitution: 0.5,
-            frictionAir: 0.08, // Higher drag for slower, floaty movement
+            frictionAir: 0.12, // Higher drag for slower, floaty movement
             mass: 0.2,
             render: { visible: false } 
         });

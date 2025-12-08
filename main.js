@@ -71,6 +71,8 @@ function init() {
 
     // 2. Matter.js Setup
     engine = Matter.Engine.create();
+    engine.positionIterations = 10; 
+    engine.velocityIterations = 10;
     world = engine.world;
     engine.gravity.y = 0.5; // Positive is down in canvas usually, but let's check coord mapping
 
@@ -334,8 +336,13 @@ function onLevelComplete() {
 function onScoreUpdate(progressData) {
     const container = document.getElementById('trackers');
     const goals = Object.keys(progressData);
+    const existingChildren = Array.from(container.children);
 
-    if (container.children.length !== goals.length) {
+    // Rebuild if count differs OR if any existing tracker color is not in current goals
+    const needsRebuild = existingChildren.length !== goals.length ||
+        !existingChildren.every(child => progressData[child.dataset.color]);
+
+    if (needsRebuild) {
         container.innerHTML = '';
         goals.forEach(color => {
             const div = document.createElement('div');
@@ -352,11 +359,14 @@ function onScoreUpdate(progressData) {
     Array.from(container.children).forEach(div => {
         const color = div.dataset.color;
         const p = progressData[color];
-        const fill = div.querySelector('.tracker-fill');
-        fill.style.height = `${Math.min(100, (p.current / p.required) * 100)}%`;
+        
+        if (p) {
+            const fill = div.querySelector('.tracker-fill');
+            fill.style.height = `${Math.min(100, (p.current / p.required) * 100)}%`;
 
-        if (p.current >= p.required) {
-            fill.style.boxShadow = `0 0 20px 5px ${getColorCss(color)}`;
+            if (p.current >= p.required) {
+                fill.style.boxShadow = `0 0 20px 5px ${getColorCss(color)}`;
+            }
         }
     });
 }
