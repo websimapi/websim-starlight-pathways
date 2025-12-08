@@ -233,7 +233,7 @@ function extendLine(point) {
     const angle = Math.atan2(point.y - lastDrawPoint.y, point.x - lastDrawPoint.x);
     const len = dist;
 
-    const body = Matter.Bodies.rectangle(midX, midY, len, 0.5, {
+    const body = Matter.Bodies.rectangle(midX, midY, len, 3.0, {
         isStatic: true,
         angle: angle,
         friction: 0,

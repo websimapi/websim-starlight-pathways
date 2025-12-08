@@ -110,15 +110,15 @@ export class LevelManager {
         document.getElementById('level-hint').innerText = data.hint;
 
         // Physics Gravity reset
-        // Increase scale to make physics responsive at this coordinate scale
-        this.world.gravity.scale = 0.003; 
+        // Increased scale to make physics responsive at this coordinate scale
+        this.world.gravity.scale = 0.001; 
 
         if (data.gravity) {
             this.world.gravity.x = data.gravity.x;
             this.world.gravity.y = data.gravity.y;
         } else {
             this.world.gravity.x = 0;
-            this.world.gravity.y = -3.0; // Adjusted gravity strength
+            this.world.gravity.y = -1.0; // Adjusted gravity strength
         }
 
         // Spawn Walls
@@ -432,11 +432,11 @@ export class LevelManager {
     spawnParticle(x, y, color) {
         if (this.particles.length >= 1200) return; // Matched limit with main.js
 
-        const size = 0.6; 
+        const size = 1.0; 
         const body = Matter.Bodies.circle(x, y, size, {
             friction: 0.0,
             restitution: 0.5,
-            frictionAir: 0.001, // Minimal drag for better falling
+            frictionAir: 0.03, // Increased drag for better falling
             mass: 0.2,
             render: { visible: false } 
         });
@@ -445,8 +445,8 @@ export class LevelManager {
 
         // Initial velocity variation - spray effect
         Matter.Body.setVelocity(body, { 
-            x: (Math.random() - 0.5) * 2.0, 
-            y: (Math.random() - 0.5) * 2.0 
+            x: (Math.random() - 0.5) * 1.0, 
+            y: (Math.random() - 0.5) * 1.0 
         });
 
         this.particles.push({
